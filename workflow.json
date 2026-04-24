@@ -1,0 +1,181 @@
+{
+  "name": "PRODUCT SEARCH BOT-API",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "def231cd-3032-4383-b535-5fefdd8e1f87",
+        "options": {
+          "allowedOrigins": "*"
+        }
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -32,
+        0
+      ],
+      "id": "3a1befd3-913c-42b9-bccd-fc6366775be7",
+      "name": "Webhook",
+      "webhookId": "def231cd-3032-4383-b535-5fefdd8e1f87"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "14gzS1l9FlIgZjNF6MiiEsxkjrPF7IPf-mJdJtFXel50",
+          "mode": "list",
+          "cachedResultName": "Google Sheet Demo Fabric Database Format",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/14gzS1l9FlIgZjNF6MiiEsxkjrPF7IPf-mJdJtFXel50/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 2057520956,
+          "mode": "list",
+          "cachedResultName": "fnal sheet",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/14gzS1l9FlIgZjNF6MiiEsxkjrPF7IPf-mJdJtFXel50/edit#gid=2057520956"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "Code",
+              "lookupValue": "={{ $json.body[\"data\"][\"body\"] }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        208,
+        16
+      ],
+      "id": "4ad186c1-c099-4cac-a496-d7bf3dbc5a61",
+      "name": "Get row(s) in sheet",
+      "alwaysOutputData": true,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "Vwrt4NIWAezF0PVH",
+          "name": "Google Sheets OAuth2 API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "bd1a7682-b949-4e58-893f-531768f0731b",
+              "leftValue": "={{ $json.Code }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        496,
+        16
+      ],
+      "id": "f209caec-7ef5-48c3-ab8a-2cee1ab42d88",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.ultramsg.com/instance170537/messages/chat",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "token",
+              "value": "=fycs4lw6hlt8lq69"
+            },
+            {
+              "name": "to",
+              "value": "={{ $node[\"Webhook\"].json[\"body\"][\"data\"][\"from\"] }}"
+            },
+            {
+              "name": "body",
+              "value": "=✨ *PRODUCT ARCHIVE FOUND* ✨\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n🏢 *Company:* SIDDIQSON'S LIMITED\n\n📑 *Article Detail:*\n• *Name:* {{ $json[\"ARTICLE\"] }}\n• *Reference Code:* {{ $json[\"Code\"] }}\n• *Costing ID:* {{ $json[\"Costing Code\"] }}\n\n🛠️ *Technical Specifications:*\n• *Quality:* {{ $json[\"QUALITY.\"] }}\n• *Fabric Type:* {{ $json[\"Type\"] }}\n• *Weight:* {{ $json[\"Weight\"] }}\n• *Weave:* {{ $json[\"Weave\"] }}\n\n🎨 *Aesthetics:*\n• *Colorway:* {{ $json[\"Color\"] }}\n• *Finishing:* {{ $json[\"Finish Type\"] }}\n\n💰 *Commercials:*\n• *Price (Local):* {{ $json[\"Price LC\"] }}\n• *Price (Foreign):* {{ $json[\"Price FC\"] }}\n\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n🤔 *Need another lookup?*\nSimply send the *Product Code* below! 🔎"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        736,
+        -112
+      ],
+      "id": "85470042-969a-4ab6-b2a2-55c0eddc4983",
+      "name": "HTTP Request"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        []
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "fe2eaf24-8f58-49ed-8bb6-7e21f2e96152",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "9b2e35bce8c570892f313f23f7875369a0f81b25ee79336762d1064b37ab7cb9"
+  },
+  "id": "qQcSf0SZWSDzfnAJ",
+  "tags": []
+}
